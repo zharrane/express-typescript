@@ -3,16 +3,19 @@ import express from 'express';
 import bodyParser from 'body-parser';
 
 import config from './config/config';
-import login from './config/login';
+import logging from './config/logging';
 
-const NAMESPACE = 'server';
+import sampleRoutes from './routes/sample';
+
+//** */
+const NAMESPACE = 'SERVER';
 const app = express();
 
 app.use((req, res, next) => {
-    login.info(NAMESPACE, `METHOD - [${req.method}] URL - [${req.url}] IP - [${req.socket.remoteAddress}]`);
+    logging.info(NAMESPACE, `METHOD - [${req.method}] URL - [${req.url}] IP - [${req.socket.remoteAddress}]`);
 
     res.on('finish ', () => {
-        login.info(
+        logging.info(
             NAMESPACE,
             `METHOD - [${req.method}] URL - [${req.url}]
              IP - [${req.socket.remoteAddress}], STATUS - [${res.statusCode}]`
@@ -35,7 +38,7 @@ app.use((req, res, next) => {
 });
 
 /**Routes  */
-
+app.use('/', sampleRoutes);
 /**     Error Handling */
 
 app.use((req, res, next) => {
@@ -46,4 +49,4 @@ app.use((req, res, next) => {
 /** Server */
 
 const httpserver = http.createServer(app);
-httpserver.listen(config.server.port, () => login.info(NAMESPACE, ` Server running on ${config.server.hostname}:${config.server.port}`));
+httpserver.listen(config.server.port, () => logging.info(NAMESPACE, ` Server running on ${config.server.hostname}:${config.server.port}`));
